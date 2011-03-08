@@ -1,5 +1,6 @@
 require 'mongrel'
 require 'gem_plugin'
+require 'yaml'
 
 class Upload < GemPlugin::Plugin "/handlers"
   include Mongrel::HttpHandlerPlugin
@@ -86,5 +87,18 @@ class Mongrel::UploadProgress
   
   def list
     @counters.keys.sort
+  end
+end
+
+class Mongrel::UploadProgressConfig
+  class<<self
+    def options(root_dir)
+      case RAILS_ENV
+      when 'production'
+        YAML.load_file(File.join(root_dir, 'config/mongrel_upload_progress_prod.yml'))
+      else
+        YAML.load_file(File.join(root_dir, 'config/mongrel_upload_progress_dev.yml'))
+      end
+    end
   end
 end
