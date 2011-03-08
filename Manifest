@@ -4,6 +4,5 @@ LICENSE
 Manifest
 README.rdoc
 Rakefile
-haikulearning_mongrel_upload_progress.gemspec
 lib/haikulearning_mongrel_upload_progress/init.rb
 resources/defaults.yaml

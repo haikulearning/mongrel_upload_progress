@@ -1,7 +1,7 @@
-= mongrel_upload_progress
+= {haikulearning_mongrel_upload_progress}[http://rubygems.org/gems/haikulearning_mongrel_upload_progress]
 
 A mongrel plugin that makes it possible to check the progress of in-transit uploads.
 
 == Haiku Learning Systems Modifications
 
-This fork of the {original mongrel_upload_progress gem}[http://rubygems.org/gems/mongrel_upload_progress] has been modified by {Haiku Learning Systems}[http://www.haikulearning.com] to add a few features. Please read the CHANGELOG for full details.
+This fork of the {original mongrel_upload_progress gem}[http://rubygems.org/gems/mongrel_upload_progress] has been modified by {Haiku Learning Systems}[http://www.haikulearning.com] to add a few features. Please read the CHANGELOG for more details about these changes.

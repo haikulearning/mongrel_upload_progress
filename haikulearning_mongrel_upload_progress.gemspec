@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.email = %q{}
   s.extra_rdoc_files = ["CHANGELOG", "COPYING", "LICENSE", "README.rdoc", "lib/haikulearning_mongrel_upload_progress/init.rb"]
   s.files = ["CHANGELOG", "COPYING", "LICENSE", "Manifest", "README.rdoc", "Rakefile", "haikulearning_mongrel_upload_progress.gemspec", "lib/haikulearning_mongrel_upload_progress/init.rb", "resources/defaults.yaml"]
-  s.homepage = %q{http://haikulearning_mongrel_upload_progress.github.com/haikulearning_mongrel_upload_progress/}
+  s.homepage = %q{https://github.com/haikulearning/mongrel_upload_progress}
   s.rdoc_options = ["--line-numbers", "--inline-source", "--title", "Haikulearning_mongrel_upload_progress", "--main", "README.rdoc"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{haikulearning_mongrel_upload_progress}
