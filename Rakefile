@@ -9,8 +9,6 @@ begin
 
     p.need_tar_gz = false
     p.need_tgz = true
-    #p.certificate_chain = ['~/p/configuration/gem_certificates/mongrel/mongrel-public_cert.pem',
-    #  '~/p/configuration/gem_certificates/evan_weaver-mongrel-public_cert.pem']    
     p.require_signed = false
   end
 rescue LoadError

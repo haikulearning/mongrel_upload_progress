@@ -32,8 +32,8 @@ class Upload < GemPlugin::Plugin "/handlers"
 
   private
     def upload_notify(action, params, *args)
-      return unless @path_info.include?(params['PATH_INFO']) &&
-        params[Mongrel::Const::REQUEST_METHOD] == 'POST' &&
+      return unless params[Mongrel::Const::REQUEST_METHOD] == 'POST' &&
+        @path_info.detect { |r| r === params['PATH_INFO'] } &&
         upload_id = Mongrel::HttpRequest.query_parse(params['QUERY_STRING'])['upload_id']
       if action == :mark
         last_checked_time = Mongrel::Uploads.last_checked(upload_id)

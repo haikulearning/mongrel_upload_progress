@@ -1,7 +1,8 @@
-resources/defaults.yaml
-README
-Manifest
-LICENSE
-lib/mongrel_upload_progress/init.rb
-COPYING
 CHANGELOG
+COPYING
+LICENSE
+Manifest
+README.rdoc
+Rakefile
+lib/mongrel_upload_progress/init.rb
+resources/defaults.yaml
