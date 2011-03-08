@@ -90,15 +90,25 @@ class Mongrel::UploadProgress
   end
 end
 
-class Mongrel::UploadProgressConfig
-  class<<self
+module Mongrel::UploadProgressConfig
+  class << self
     def options(root_dir)
-      case ::RAILS_ENV
-      when 'production'
-        YAML.load_file(File.join(root_dir, 'config/mongrel_upload_progress_prod.yml'))
-      else
-        YAML.load_file(File.join(root_dir, 'config/mongrel_upload_progress_dev.yml'))
+      opts = YAML.load_file(File.join(root_dir, 'mongrel_upload_progress.yml')) rescue nil
+      raise NoConfigSpecified.new("No config file exists at #{File.join(root_dir, 'config/mongrel_upload_progress.yml').inspect}") if opts.nil? || opts.empty?
+      
+      begin
+        ::RAILS_ENV
+      rescue
+        raise NoConfigSpecified.new("The ::RAILS_ENV constant must be set (Sorry, no Rails 3 support yet.)")
       end
+      
+      opts = opts[::RAILS_ENV] rescue nil
+      raise NoConfigSpecified.new("No config information exists for the #{::RAILS_ENV} environment.") if opts.nil? || opts.empty?
+      
+      opts
     end
   end
-end
+  
+  class NoConfigSpecified < ::RuntimeError
+  end
+end 

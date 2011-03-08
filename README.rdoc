@@ -5,3 +5,104 @@ A mongrel plugin that makes it possible to check the progress of in-transit uplo
 == Haiku Learning Systems Modifications
 
 This fork of the {original mongrel_upload_progress gem}[http://rubygems.org/gems/mongrel_upload_progress] has been modified by {Haiku Learning Systems}[http://www.haikulearning.com] to add a few features. Please read the CHANGELOG for more details about these changes.
+
+This plugin works as a *drop in replacement* for mongrel_upload_progress, though we *strongly suggest* you only have one or the other installed. We haven't tested the interaction between the two & make no guarantees that they will play well together.
+
+= Mongrel Configuration
+
+Place the following code somewhere in your code (e.g. <tt>config/mongrel_upload_progress.conf</tt>).
+
+  uri("/", 
+    :handler => plugin(
+      "/handlers/upload",
+      Mongrel::UploadProgressConfig.options(File.join(RAILS_ROOT, 'config'))
+    ),
+    :in_front => true
+  )
+
+Because, we're using Mongrel::UploadProgressConfig above, create a <tt>mongrel_upload_progress.yml</tt> file within the appropriate dir (within <tt>File.join(RAILS_ROOT, 'config')</tt> in the above example). The following
+is one example. Note: You'll need to specify a configuration for each environment
+you plan to use in your Application.
+
+  development: &_defaults
+    :path_info : 
+    - /upload/file                      # Handles UploadController#file
+    - !ruby/regexp /^\/file\/upload.*/  # Handles any upload* action in FileController
+    :debug : true
+  # Use the development settings, but override the :debug option.
+  production: 
+    <<: *_defaults
+    :debug : false
+
+Then reference the conf file when you start your mongrel(s)
+
+  mongrel_rails start -e development -S config/mongrel_upload_progress.conf
+
+= Using DRb
+
+A very useful feature if you're running more than one mongrel process, even across multiple servers.
+
+== DRb Configuration
+
+Update your <tt>mongrel_upload_progress.yml</tt> setting by adding DRb information.
+
+  production:
+    <<: *_defaults
+    :drb : druby://127.0.0.1:7999 # A single-server setup. Specify an IP or hostname other than loopback for multiple server setups.
+
+== DRb Server
+
+Now, start up a DRb server. Here's an example ruby script.
+
+  require 'rubygems'
+  require 'drb'
+  require 'gem_plugin'
+
+  RAILS_ENV = ENV['RAILS_ENV'] || 'development'
+  config_dir = File.join(File.dirname(__FILE__), '../config')
+
+  GemPlugin::Manager.instance.load 'mongrel' => GemPlugin::INCLUDE
+  DRb.start_service(
+    Mongrel::UploadProgressConfig.options(config_dir)[:drb],
+    Mongrel::UploadProgress.new
+  )
+  DRb.thread.join
+
+Start the above server with this command:
+
+  RAILS_ENV=production ruby path/to/above_script.rb &
+
+== DRb in IRB
+
+For debugging purposes, you can interact with your DRb server using the following IRB script
+
+  require 'rubygems'
+  require 'drb'
+  require 'gem_plugin'
+
+  RAILS_ENV = ENV['RAILS_ENV'] || 'development'
+
+  GemPlugin::Manager.instance.load 'mongrel' => GemPlugin::INCLUDE
+  DRb.start_service
+
+  def list
+    updrb.list
+  end
+  def updrb
+    @updrb ||= DRbObject.new(nil,
+      Mongrel::UploadProgressConfig.options(File.join(File.dirname(__FILE__), '../config'))[:drb]
+    )
+  end
+  def reload_updrb
+    @updrb = nil
+    updrb
+  end
+
+Then interact with IRB as follows:
+
+  $ RAILS_ENV=production irb -r path/to/above_script.rb
+  > list #=> []
+  # After an upload starts...
+  > list #=> ['1299607166']
+  # You can call any Mongrel::UploadProgress method as well
+  > updrb.check('1299607166') #=> {:received=>1024, :size=>56332114} 
