@@ -93,7 +93,7 @@ end
 class Mongrel::UploadProgressConfig
   class<<self
     def options(root_dir)
-      case RAILS_ENV
+      case ::RAILS_ENV
       when 'production'
         YAML.load_file(File.join(root_dir, 'config/mongrel_upload_progress_prod.yml'))
       else
